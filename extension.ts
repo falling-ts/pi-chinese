@@ -8,6 +8,10 @@
  *   - `replace`(默认):以"原系统提示词 + 中文指令"整体覆盖本轮回送给模型的 system prompt。
  *   - `append`        :仅向 pi 的 appendSystemPrompt 段追加中文指令(保留结构化渲染顺序)。
  *
+ * 注意:`event.systemPrompt` 是只读 getter,不能直接赋值(严格模式下会抛 TypeError,且被
+ * pi 的扩展 runner 静默吞掉)。要覆盖本轮系统提示词,必须从 handler **返回**
+ * `{ systemPrompt }`,对应 pi 的 `BeforeAgentStartEventResult.systemPrompt`。
+ *
  * 安装:把本仓库软链到 ~/.pi/agent/extensions/pi-chinese 即可(pi 启动器自动发现)。
  */
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
@@ -30,6 +34,7 @@ export default function piChinese(pi: ExtensionAPI): void {
       return;
     }
     // replace 模式:保留 pi 原有系统提示词,仅在其后追加中文强制指令。
-    event.systemPrompt = (event.systemPrompt ?? "") + "\n\n" + CHINESE_DIRECTIVE;
+    // `event.systemPrompt` 只读,须通过返回值覆盖(会被投影到本轮请求的 system prompt)。
+    return { systemPrompt: (event.systemPrompt ?? "") + "\n\n" + CHINESE_DIRECTIVE };
   });
 }
