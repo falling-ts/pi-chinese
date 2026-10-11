@@ -1,13 +1,38 @@
 {
   "name": "pi-chinese",
   "version": "1.0.0",
-  "private": true,
-  "type": "module",
   "description": "强制 pi 全程使用简体中文(思考与输出)。",
-  "keywords": ["pi-package"],
+  "type": "module",
+  "license": "MIT",
+  "author": "falling-ts <zgh.yuanshang@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/falling-ts/pi-chinese.git"
+  },
+  "homepage": "https://github.com/falling-ts/pi-chinese#readme",
+  "bugs": {
+    "url": "https://github.com/falling-ts/pi-chinese/issues"
+  },
+  "keywords": [
+    "pi-package",
+    "pi",
+    "pi-extension",
+    "pi-coding-agent",
+    "chinese",
+    "i18n",
+    "language"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "pi": {
     "extensions": ["./extension.ts"]
   },
+  "files": [
+    "extension.ts",
+    "README.md",
+    "LICENSE"
+  ],
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*"
   }
