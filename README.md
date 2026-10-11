@@ -27,7 +27,7 @@ New-Item -ItemType SymbolicLink `
 ### 2. 从 npm 安装
 
 ```bash
-pi install npm:pi-chinese
+pi install npm:@falling-ts/pi-chinese
 ```
 
 ### 3. 从 git 安装
@@ -39,7 +39,7 @@ pi install git:github.com/falling-ts/pi-chinese
 单次试用（不写入配置）：
 
 ```bash
-pi -e npm:pi-chinese
+pi -e npm:@falling-ts/pi-chinese
 ```
 
 ## 模式
@@ -61,7 +61,7 @@ pi -e npm:pi-chinese
 Remove-Item "$env:USERPROFILE\.pi\agent\extensions\pi-chinese"
 ```
 
-npm / git 方式用 `pi remove npm:pi-chinese`（或对应的 git 源）。
+npm / git 方式用 `pi remove npm:@falling-ts/pi-chinese`（或对应的 git 源）。
 
 ## 规范与发布
 
@@ -72,8 +72,13 @@ npm / git 方式用 `pi remove npm:pi-chinese`（或对应的 git 源）。
   否则会绕过 pi 的扩展模块映射、产生重复的运行时模块（pi 会就此报警告）；
 - `keywords` 含 `pi-package`，满足 [Pi 包画廊](https://pi.dev/packages) 的收录条件。
 
-关于 `private`：`package.json` **未**设 `"private": true`，即本包处于「可发布」状态。
-若只想在本机/私有范围使用、避免 `npm publish` 误发，请自行加回 `"private": true` 并移除 `files` 字段。
+发布为 **scoped 包** `@falling-ts/pi-chinese`，因为公开包需有 scope 且必须带 `publishConfig.access: "public"`，
+否则 `npm publish` 会被拒绝（scoped 包默认 restricted）。发布命令（本机默认 registry 是淘宝镜像，
+必须显式指定 npmjs）：
+
+```bash
+npm publish --registry=https://registry.npmjs.org/
+```
 
 ## License
 
