@@ -4,7 +4,8 @@
 工具调用分析、以及面向用户的所有输出一律用中文。代码与标识符保持英文，但注释与说明用中文。
 
 同时约束**文件编辑方式**：对文件的编辑与修改**只能使用 `edit` 工具**（新建用 `write`），
-严禁用 js/mjs/py 等命令行脚本改文件；但允许用这些命令对已完成的修改做**只读校验**。
+严禁用 js/mjs/py 等命令行脚本改文件；但允许用这些命令对已完成的修改做**只读校验**，
+且校验脚本应经 stdin/heredoc 就地执行，不落地临时文件。
 
 通过 pi 的扩展钩子 `before_agent_start` 在每次请求前注入这两类指令实现，无需任何构建步骤
 （pi 通过 jiti 直接加载 `.ts`）。
@@ -54,7 +55,7 @@ pi -e npm:@falling-ts/pi-chinese
 | `replace`（默认） | 以"原系统提示词 + 指令"整体覆盖本轮回送模型的内容 |
 | `append` | 仅向 pi 的 `appendSystemPrompt` 段追加指令（保留结构化渲染顺序） |
 
-两种模式都会注入下面**两类指令**。
+两种模式都会注入下面**三类指令**。
 
 ### 1. 语言要求
 
@@ -69,6 +70,32 @@ pi -e npm:@falling-ts/pi-chinese
 - 允许用这些命令对**已完成的修改**做**只读**校验（语法检查、类型检查、lint、测试、查看 diff）；
 - 校验脚本**不得回写文件**；若校验发现问题，仍须用 `edit` 修正；
 - 确属无法用 `edit` 完成时，先说明原因并征得同意，不得擅自用脚本绕过。
+
+### 3. 校验脚本
+
+执行校验脚本时**不要先创建临时文件再运行**（会遗留垃圾、污染项目），应直接把多行代码经
+stdin 交给解释器就地执行：
+
+```bash
+# Node
+node - <<'JS'
+console.log(process.version);
+JS
+
+# Node（需 ESM 时）
+node --input-type=module - <<'JS'
+import { readFileSync } from "node:fs";
+JS
+
+# Python（注意：本机命令是 python（3.x），python3 不存在会报错）
+python - <<'PY'
+import sys
+print(sys.version)
+PY
+```
+
+单行可用 `node -e '...'` / `python -c '...'`。若代码较长或需要多文件，仍优先写到
+`.agents/tmp/`（已被 gitignore）而非项目目录。
 
 改完扩展后，在会话内 `/reload` 即可生效；对新启动的会话自动生效。
 

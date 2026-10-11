@@ -5,6 +5,7 @@
  *   1. 语言要求:全程简体中文(包括思考/推理与中间输出)。
  *   2. 编辑约束:对文件的编辑与修改只能使用 `edit` 工具;严禁用 js/mjs/py 等命令行
  *      脚本去改文件;但允许用它们对修改结果做校验。
+ *   3. 校验脚本:执行校验脚本请用 heredoc/stdin 就地执行, 不要先落地临时文件污染项目。
  *
  * 两种模式(环境变量 `PI_CHINESE_MODE` 控制):
  *   - `replace`(默认):以"原系统提示词 + 指令"整体覆盖本轮回送给模型的 system prompt。
@@ -33,8 +34,17 @@ const EDIT_DIRECTIVE = [
   "若确实无法用 `edit` 完成某次修改,先向用户说明原因并征得同意,不得擅自杀脚本绕过。",
 ].join("");
 
+const SCRIPT_DIRECTIVE = [
+  "【校验脚本】执行校验脚本时,不要先创建临时文件再运行——那会遗留垃圾文件、污染项目。",
+  "应直接用「多行代码经 stdin 交给解释器」的方式就地执行:",
+  "  · Node: `node - <<'JS' ... JS` 或 `node --input-type=module - <<'JS' ... JS`(需 ESM 时);",
+  "  · Python: `python - <<'PY' ... PY`。注意本机命令是 `python`(3.x),`python3` 不存在会报错。",
+  "一次性单行脚本也可用 `node -e '...'` / `python -c '...'`。",
+  "若代码较长或需要多文件,仍优先写到 `.agents/tmp/`(已被 gitignore)而不是项目里。",
+].join("");
+
 /** 本轮要注入的全部指令。 */
-const DIRECTIVES = CHINESE_DIRECTIVE + "\n\n" + EDIT_DIRECTIVE;
+const DIRECTIVES = CHINESE_DIRECTIVE + "\n\n" + EDIT_DIRECTIVE + "\n\n" + SCRIPT_DIRECTIVE;
 
 export default function piChinese(pi: ExtensionAPI): void {
   const mode = (process.env.PI_CHINESE_MODE ?? "replace").toLowerCase();
