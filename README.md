@@ -35,12 +35,12 @@
 
 ### 1. 软链接（推荐，随本仓库更新而更新）
 
-本仓库以 git submodule 形式位于 pi-space 根目录的 `pi-chinese/`：
+本仓库以 git submodule 形式位于 pi-s 根目录的 `pi-chinese/`：
 
 ```powershell
 New-Item -ItemType SymbolicLink `
   -Path "$env:USERPROFILE\.pi\agent\extensions\pi-chinese" `
-  -Target "D:\AI\pi-space\pi-chinese"
+  -Target "D:\AI\pi-s\pi-chinese"
 ```
 
 软链后，pi 启动器会在全局扩展目录 `~/.pi/agent/extensions/` 下发现它并自动加载。
