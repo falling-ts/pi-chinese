@@ -161,7 +161,8 @@ npm / git 方式用 `pi remove npm:@falling-ts/pi-chinese`（或对应的 git �
 本包遵循 pi 的 [package 规范](https://github.com/earendil-works/pi/blob/main/packages/coding-agent/docs/packages.md)：
 
 - `package.json` 用 `pi.extensions` 显式声明扩展入口；
-- 宿主包 `@earendil-works/pi-coding-agent` 只出现在 `peerDependencies`（范围 `"*"`），**不得**放进 `dependencies`，
+- 宿主包 `@earendil-works/pi-coding-agent` 只出现在 `peerDependencies`（范围 `">=1.3.0"`，即不低于上游
+  最新发布，当前 1.3.0），**不得**放进 `dependencies`，
   否则会绕过 pi 的扩展模块映射、产生重复的运行时模块（pi 会就此报警告）；
 - `keywords` 含 `pi-package`，满足 [Pi 包画廊](https://pi.dev/packages) 的收录条件。
 
